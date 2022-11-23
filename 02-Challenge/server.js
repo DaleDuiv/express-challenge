@@ -8,6 +8,7 @@ const dbData = require("./Develop/db/db.json");
 
 const readFileAsync = util.promisify(fs.readFile);
 const writeFileAsync = util.promisify(fs.writeFile);
+const notes = [].concat(JSON.parse(data));
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -36,23 +37,21 @@ app.get("/api/notes", (req, res) => {
 
 
 
-app.post("/api/notes", function(req, res) {
+app.post("/api/notes", (req, res) => {
   const note = req.body;
-  readFileAsync("./develop/db/db.json", "utf-8").then(function(data) {
-  const notes = [].concat(JSON.parse(data));
+  readFileAsync(dbData, "utf-8").then((data) => {
   notes.id = notes.length + 1
   notes.push(note);
   return notes;  
-  }).then(function(notes) {
-    writeFileAsync("./develop/db/db.json", JSON.stringify(notes));
+  }).then((notes) => {
+    writeFileAsync(dbData, JSON.stringify(notes));
     res.json(note);
   })
 });
 
-app.delete("/api/notes/:id", function(req,res) {
+app.delete("/api/notes/:id", (req,res) => {
   const idToDelete = parseInt(req.params.id);
-  readFileAsync("./develop/db/db.json", "utf-8").then(function(data) {
-    const notes = [].concat(JSON.parse(data));
+  readFileAsync(dbData, "utf-8").then((data) => {
     const newNotesData = []
     for (let i = 0; i < notes.length; i++) {
       if(idToDelete !== notes[i].id) {
@@ -60,8 +59,8 @@ app.delete("/api/notes/:id", function(req,res) {
       }
     }
     return newNotesData
-  }).then(function(notes) {
-  writeFileAsync("./Develop/db/db.json", JSON.stringify(notes))
+  }).then((notes) => {
+  writeFileAsync(dbData, JSON.stringify(notes))
   res.send("saved sucessfully!");
   })
 });
