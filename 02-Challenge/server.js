@@ -2,6 +2,8 @@ const express = require("express");
 const fs = require("fs");
 const path = require("path");
 const util = require("util");
+const dbData = require("./Develop/db/db.json");
+
 
 
 const readFileAsync = util.promisify(fs.readFile);
@@ -28,13 +30,11 @@ app.get("*", (req, res) =>
 )
 
 
-app.get("/api/notes", function(req, res) {
-  readFileAsync("./develop/db/db.json", "utf-8").then(function(data) {
-    notes = [].concat(JSON.parse(data))
-    res.json(notes);
+app.get("/api/notes", (req, res) => {
+    res.json(dbData);
   })
 
-});
+
 
 app.post("/api/notes", function(req, res) {
   const note = req.body;
